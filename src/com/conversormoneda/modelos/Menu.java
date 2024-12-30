@@ -1,11 +1,15 @@
 package com.conversormoneda.modelos;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.Scanner;
 
 public class Menu {
     public int alternativa;
     private String api_key;
-
+    private Scanner teclado = new Scanner(System.in);
     public Menu(String api_key) {
         this.api_key = api_key;
     }
@@ -28,33 +32,45 @@ public class Menu {
         );
     }
         public void validarOpcion(){
-            Scanner teclado = new Scanner(System.in);
-            while(this.alternativa < 1 || this.alternativa > 7) {
+            while(this.alternativa < 1 || this.alternativa > 7 || this.alternativa != 7) {
                 desplegarInterfaz();
                 this.alternativa = teclado.nextInt();
+                logicaOpciones();
                 if (this.alternativa < 0) {
                     System.out.println("Escriba una opción válida, no negativo");
                 }else if(this.alternativa >7){
-                    System.out.println("Escriba una opción válida, no positiva");
+                    System.out.println("Escriba una opción válida, no más de 7");
                 }
             }
-            logicaOpciones();
         }
         public void logicaOpciones(){
-            switch (this.alternativa){
-                case 1:
-                    Conexion curr_api = new Conexion(this.api_key, "USD");
-                    curr_api.get();
-                    System.out.println(curr_api.getResponse().body());
-                case 2:;
-                case 3:;
-                case 4:;
-                case 5:;
-                case 6:;
-                case 7:
-                    System.out.println("Hasta Luego");
-                    System.exit(0);
-                    break;
-            }
+
+                switch (this.alternativa){
+                    case 1:
+                        ingresarDatos("USD","ARS");
+                        break;
+                    case 2:
+                        ingresarDatos("ARS","USD");
+                        break;
+                    case 3:
+                        ingresarDatos("USD","BRL");
+                        break;
+                    case 4:
+                        ingresarDatos("BRL","USD");
+                        break;
+                    case 5:
+                        ingresarDatos("USD","COP");
+                        break;
+                    case 6:
+                        ingresarDatos("COP","USD");
+                        break;
+                }
+
+        }
+        public void ingresarDatos(String currency_origen, String currency_destino){
+            System.out.println("Ingrese el monto: ");
+            double monto = this.teclado.nextDouble();
+            Currency currency = new Currency(currency_origen, currency_destino, monto);
+            currency.getValor(this.api_key);
         }
 }
